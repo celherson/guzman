@@ -1,0 +1,94 @@
+<?php 
+    $query = "SELECT * FROM info";
+    $query_run = mysqli_query($_connections, $query);
+
+    if(mysqli_num_rows($query_run) > 0)
+    {
+        foreach($query_run as $client)
+        {
+?>
+           <tr>
+            <td><?= $client['Name']; ?></td>
+            <td><?= $client['Vehicle']; ?></td>
+            <td><?= $client['DATE']; ?></td>
+            <td><?= $client['Status']; ?>
+            <div class="optionContainer">
+            <button class="optionButton"><i class="fa-solid fa-caret-down"></i></button>
+            <div class="options">
+            <button onclick="selectOption(1)">Pending</button>
+            <button onclick="selectOption(2)">Maintenance</button>
+            <button onclick="selectOption(3)">Repaired</button>
+        </div>
+    </div>
+</td>
+            <td><?= $client['Plate']; ?></td>
+            <td>
+                <a href="applicant-view.php?id=<?= $client['Serial']; ?>" class="btn btn-info btn-sm">View</a>
+                <a href="Edit.php?id=<?= $client['Serial']; ?>"  class="btn btn-success btn-sm">Edit</a>
+                <button type="submit"   onclick="showNotification()" class="btn btn-danger btn-sm">Delete</button>
+            </td>
+        </tr>
+<?php
+        }
+    }
+    else
+    {
+        echo "<tr><td colspan='8'>No Record Found</td></tr>";
+    }
+?>
+
+<?php
+// Include your database connection logic
+include('Action/connection.php');
+
+// Fetch data from the database
+$query = "SELECT * FROM info"; // Modify this query according to your database structure
+$result = mysqli_query($_connections, $query);
+
+// Check if there are any rows returned
+if(mysqli_num_rows($result) > 0) {
+    // Loop through each row and display data in table format
+    while($row = mysqli_fetch_assoc($result))
+    {
+        echo "<tr>";
+        echo "<td>" . $row['Serial'] . "</td>";
+        echo "<td>" . $row['Name'] . "</td>";
+        echo "<td>" . $row['Vehicle'] . "</td>";
+        echo "<td>" . $row['DATE'] . "</td>";
+        $status_class = "";
+        switch(strtolower($row['Status'])) {
+            case 'repaired':
+                $status_class = "repaired";
+                break;
+            case 'maintenance':
+                $status_class = "maintenance";
+                break;
+            case 'pending':
+                $status_class = "pending";
+                break;
+            default:
+                $status_class = "";
+        }
+        
+        echo "<td class='status $status_class'>" . $row['Status'] . "</td>";
+        echo "<td><strong>" . $row['Plate'] . "</strong></td>";
+        echo "</tr>";
+    }
+} else {
+    // No rows found
+    echo "<tr><td colspan='6'>No data available</td></tr>";
+}
+?>
+
+ 
+
+width: 82vw;
+height: 90vh;
+background-color: lightslategrey;
+grid-template-columns: repeat(auto-fit,minmax(270px,1fr));
+backdrop-filter: blur(7px);
+box-shadow: 0 .4rem .8rem #0005;
+border-radius: .8rem;
+position: absolute;
+overflow: auto;
+left: 5%;
